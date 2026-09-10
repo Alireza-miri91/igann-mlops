@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: igann
+spec: 
+  replicas: 2
+  selector:
+    matchLabels:
+      app: igann
+  template:
+    metadata:
+      labels:
+        app: igann
+    spec:
+      containers:
+        - name: igann
+          image: igann-mlops:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
