@@ -1,0 +1,7 @@
+NAME                         READY   STATUS    RESTARTS   AGE   IP             NODE                              NOMINATED NODE   READINESS GATES
+pod/igann-5976677fd9-86btm   1/1     Running   0          20m   10.244.0.243   aks-default-21887623-vmss000000   <none>           <none>
+pod/igann-5976677fd9-rkgp4   1/1     Running   0          20m   10.244.0.37    aks-default-21887623-vmss000000   <none>           <none>
+
+NAME                 TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)          AGE   SELECTOR
+service/igann        LoadBalancer   10.0.153.249   48.201.224.233   8000:30903/TCP   20m   app=igann
+service/kubernetes   ClusterIP      10.0.0.1       <none>           443/TCP          27m   <none>

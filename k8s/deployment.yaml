@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: igann
-          image: igann-mlops:latest
+          image: igannmlopsacr.azurecr.io/igann-mlops:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
