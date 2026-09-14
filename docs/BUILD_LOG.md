@@ -80,6 +80,25 @@ _Last updated: 2026-09-10._
 - **8. Monitoring: Prometheus + PSI/KS drift monitor.** **TODO.**
 - **9. Promote:** public README, `bank_experiments` file, LinkedIn post, CV skill updates. **TODO (explicitly deferred by Ali until the end).**
 
+## NEXT SESSION — resume here: swap in Ali's constrained IGANN (his real research)
+Currently the project uses the stock `IGANNRegressor` (package). Replace it with Ali's own model.
+- Source: `portfolio/RA_Master_project/Thesis/model_1_1_with_dec_and_inc.py` → `class IGANN`. It's a fork of IGANN adding **monotonicity constraints** via **CVXPY**: pass `monotonicity={"MedInc": +1, "AveOccup": -1, ...}` (dict keyed by real feature NAME; +1 increasing, -1 decreasing) to force each shape function's direction. API: `IGANN(task="regression", monotonicity={...}, random_state=42).fit(X_df, y).predict(X_df)`.
+- Plan: (1) copy that file into `src/constrained_igann.py`; (2) add `cvxpy` to requirements + re-freeze; (3) in `train.py`, import his `IGANN` and use it in place of `IGANNRegressor` with a `monotonicity` dict; (4) retrain; (5) verify R² (expect a small dip vs 0.68 — the interpretability trade) and that the earlier nonsensical low-MedInc→+contribution anomaly is fixed; (6) rebuild image → then bricks #7 CI/CD, #8 monitoring.
+- Proposed monotonic priors (PENDING Ali's confirmation): `MedInc +1`, `AveRooms +1`, `AveOccup -1`; leave HouseAge/Latitude/Longitude/Population/AveBedrms unconstrained.
+- Gotcha to handle: joblib pickles the model by its module name, so `constrained_igann` must be importable the SAME way in `train.py`, `serve.py`, and inside Docker (keep `src/` on the path consistently), or `joblib.load` in serving will fail.
+
+### ✅ DONE 2026-09-14 — constrained IGANN integrated as the model
+- His model = monotonicity-constrained IGANN (CVXPY), copied to `src/constrained_igann.py`. Constraints chosen interactively (saved to `configs/monotonicity.json`): `{MedInc:+1, AveRooms:+1, AveOccup:-1}`.
+- Result: **RMSE 0.708, R² 0.618** (below stock 0.68 — the honest cost of enforced monotonicity; the constrained booster also converges in ~3 rounds then diverges on this data, so it runs shallow). Saved to models/model.joblib + logged to MLflow.
+- Five fixes to make the research code production-ready (write-up gold):
+  1. **Target scaling** via `TransformedTargetRegressor` — the model assumes standardized `y`.
+  2. **`get_params` fix** — added `monotonicity` so sklearn `clone()` (used by the target wrapper) preserves the constraints.
+  3. **Solver swap** — constrained solves were unstable/failing on OSQP; switched to `prob.solve(solver=cp.CLARABEL)`.
+  4. **Stabilized training** — `boost_rate=0.05`, `elm_alpha=5.0`, `early_stopping=3–5` to stop the boosting diverging.
+  5. **Picklability** — replaced a dynamic `type("LinearModel",...)` with a real module-level `LinearModel` class.
+- Interactive constraint elicitation added to `train.py` (`get_monotonicity`): prompts the domain expert, saves to config, offers keep-or-revise on later runs; non-interactive (Docker/CI) reuses the saved config.
+- TODO next: point `serve.py` at the new model (add `src` to sys.path so unpickling finds `constrained_igann`); rebuild image (needs `cvxpy`, `src/constrained_igann.py`, `configs/`); then CI/CD + monitoring.
+
 ---
 
 ## Lessons / real errors and fixes (gold for the LinkedIn post — all genuinely hit)
