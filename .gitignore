@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 models/
 .DS_Store
+
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/.terraform.lock.hcl
+
+mlruns/
+mlflow.db
+mlartifacts/

@@ -97,7 +97,9 @@ Currently the project uses the stock `IGANNRegressor` (package). Replace it with
   4. **Stabilized training** — `boost_rate=0.05`, `elm_alpha=5.0`, `early_stopping=3–5` to stop the boosting diverging.
   5. **Picklability** — replaced a dynamic `type("LinearModel",...)` with a real module-level `LinearModel` class.
 - Interactive constraint elicitation added to `train.py` (`get_monotonicity`): prompts the domain expert, saves to config, offers keep-or-revise on later runs; non-interactive (Docker/CI) reuses the saved config.
-- TODO next: point `serve.py` at the new model (add `src` to sys.path so unpickling finds `constrained_igann`); rebuild image (needs `cvxpy`, `src/constrained_igann.py`, `configs/`); then CI/CD + monitoring.
+- ✅ Serving updated: `serve.py` adds `src` to sys.path so joblib can unpickle `constrained_igann`; `/predict` returns the interpretable contributions and they visibly respect the monotonic constraints (rich house MedInc +1.72; poor house MedInc −0.77 — the earlier low-income anomaly is fixed).
+- ✅ Docker image rebuilt with the constrained model + cvxpy; container serves identically to local (prediction 4.0606, MedInc +1.7183). Red herring resolved: earlier "wrong" container outputs were a **stale container still bound to port 8000**, not a model/build problem (verified model file checksum identical + direct `docker run` predict matched local).
+- Remaining: #7 GitHub Actions CI/CD, #8 monitoring (Prometheus + drift), #9 promote (README, bank_experiments, LinkedIn, CV).
 
 ---
 
