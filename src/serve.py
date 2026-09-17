@@ -48,6 +48,7 @@ recent_requests = []  # in-memory buffer of incoming feature rows
 
 
 def psi(reference_values, current_values, edges):
+    """Population Stability Index between a reference and a current sample over given bin edges."""
     eps = 1e-6
     exp = np.histogram(reference_values, bins=edges)[0]
     act = np.histogram(current_values, bins=edges)[0]
@@ -69,16 +70,19 @@ class House(BaseModel):
 
 @app.get("/health")
 def health():
+    """Liveness probe."""
     return {"status": "ok"}
 
 
 @app.get("/metrics")
 def metrics():
+    """Expose Prometheus metrics for scraping."""
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 @app.get("/drift")
 def drift():
+    """Per-feature PSI of recent requests vs the training data; flags features drifting past 0.2."""
     if len(recent_requests) < 10:
         return {"status": "not enough requests yet", "n_requests": len(recent_requests)}
     current = pd.DataFrame(recent_requests)
@@ -93,6 +97,7 @@ def drift():
 
 @app.post("/predict")
 def predict(house: House):
+    """Predict the house value and explain it as per-feature contributions vs an average house."""
     start = time.perf_counter()
 
     features = house.model_dump()

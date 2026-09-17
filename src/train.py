@@ -25,6 +25,7 @@ CONFIG_PATH = "configs/monotonicity.json"
 
 
 def _elicit(features, current):
+    """Prompt the expert for each feature's monotonic direction; return {feature: +1 | -1}."""
     print("\nDomain-expert step: set a monotonic direction per feature.")
     print("  i = increasing, d = decreasing, n = none, Enter = keep current\n")
     label = {1: "increasing", -1: "decreasing"}
@@ -51,6 +52,7 @@ def _elicit(features, current):
 
 
 def get_monotonicity(features):
+    """Reuse saved constraints, else elicit them interactively and save; return the dict."""
     current = {}
     if os.path.exists(CONFIG_PATH):
         with open(CONFIG_PATH) as f:
