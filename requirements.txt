@@ -65,6 +65,7 @@ packaging==26.3
 pandas==2.3.3
 pillow==12.3.0
 prettytable==3.18.0
+prometheus_client==0.26.0
 propcache==0.5.2
 protobuf==6.33.6
 pyarrow==25.0.1
