@@ -1,3 +1,8 @@
+"""Train the constrained IGANN and log the run to MLflow.
+
+Monotonicity constraints are elicited from the user (or read from configs/monotonicity.json),
+features + target are standardized, and the fitted pipeline is saved to models/model.joblib.
+"""
 import os
 import sys
 import json

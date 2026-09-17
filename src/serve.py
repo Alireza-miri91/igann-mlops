@@ -1,3 +1,4 @@
+"""FastAPI serving for the constrained IGANN: interpretable /predict, /health, Prometheus /metrics, and PSI /drift."""
 import os
 import sys
 import time

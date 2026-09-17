@@ -1,3 +1,7 @@
+"""Load-test the running API: replay real houses to /predict, then print the /drift report.
+
+Usage: python scripts/simulate.py [normal|drift]   ('drift' forces MedInc/AveRooms to extremes).
+"""
 import sys, json, urllib.request
 import pandas as pd
 

@@ -1,3 +1,4 @@
+"""Snapshot the California housing dataset to data/california.csv (committed for reproducible, offline training)."""
 from sklearn.datasets import fetch_california_housing
 
 

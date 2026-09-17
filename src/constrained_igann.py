@@ -1,3 +1,9 @@
+"""Constrained IGANN: an interpretable GAM whose per-feature shape functions can be forced
+monotone (increasing/decreasing) via CVXPY, per domain-expert priors (Alireza Miri, M.Sc. thesis).
+
+Production hardening for this repo: CLARABEL solver for the constrained solves, a picklable
+LinearModel class, and `monotonicity` exposed in get_params for sklearn clone compatibility.
+"""
 import time
 import torch
 import torch.nn as nn
